@@ -17,15 +17,8 @@ Nothing. Q3 is an experimental fork of T3 Code. We love the work Theo and the pi
 
 ## Installation
 
-> [!WARNING]
-> Q3 currently supports Antigravity, Codex, Claude, Cursor, Grok Build and OpenCode. Install and authenticate at least one provider before use:
->
-> - Antigravity: install [Antigravity CLI](https://antigravity.google) (`agy`)
-> - Codex: install [Codex CLI](https://developers.openai.com/codex/cli) and run `codex login`
-> - Claude: install [Claude Code](https://claude.com/product/claude-code) and run `claude auth login`
-> - Cursor: install [Cursor CLI](https://cursor.com/cli) and run `agent login`
-> - Grok Build: install [Grok Build CLI](https://x.ai/cli) and run `grok login`
-> - OpenCode: install [OpenCode](https://opencode.ai) and run `opencode auth login`
+> [!NOTE]
+> Q3 supports Antigravity, Codex, Claude, Cursor, Grok Build and OpenCode. You don't need to manually configure them in a terminal: just open **Settings $\rightarrow$ Providers** in Q3 to install whichever CLI you want with one click and log in directly.
 
 ### Try it out (install-free)
 
