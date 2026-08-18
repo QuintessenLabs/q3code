@@ -5,6 +5,7 @@ import {
   ChevronDownIcon,
   CopyIcon,
   DownloadIcon,
+  ExternalLinkIcon,
   LoaderIcon,
   PlusIcon,
   Trash2Icon,
@@ -577,23 +578,37 @@ export function ProviderInstanceCard({
     </>
   );
 
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const shadowPath = typeof (instance.config as Record<string, unknown> | undefined)?.shadowHomePath === "string"
     ? (instance.config as Record<string, unknown>).shadowHomePath as string
     : "";
-  const isCodexShadow = instance.driver === "codex" && shadowPath.trim().length > 0;
-  const loginCmd = isCodexShadow
-    ? `$env:CODEX_HOME="${shadowPath}"; codex login`
-    : instance.driver === "codex"
-    ? "codex login"
-    : instance.driver === "claudeAgent"
-    ? "claude auth login"
-    : instance.driver === "cursor"
-    ? "agent login"
-    : instance.driver === "opencode"
-    ? "opencode auth login"
-    : instance.driver === "antigravity"
-    ? "agy login"
-    : "login";
+
+  const handleDirectLogin = async () => {
+    setIsLoggingIn(true);
+    try {
+      await fetch("/api/providers/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          driver: instance.driver,
+          shadowHomePath: shadowPath,
+        }),
+      });
+      toastManager.add({
+        type: "info",
+        title: "Browser login opened",
+        description: `Please complete authentication in your browser for ${displayName}.`,
+      });
+    } catch {
+      toastManager.add({
+        type: "error",
+        title: "Login failed",
+        description: "Could not launch login process.",
+      });
+    } finally {
+      setTimeout(() => setIsLoggingIn(false), 4000);
+    }
+  };
 
   const authRowNode = (
     <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px] leading-[1.45] text-muted-foreground/80">
@@ -616,19 +631,19 @@ export function ProviderInstanceCard({
         <Button
           type="button"
           size="xs"
-          variant="secondary"
-          className="h-6 gap-1 px-2 text-xs font-medium text-foreground hover:bg-muted"
+          variant="default"
+          className="h-6 gap-1 px-2.5 text-xs font-semibold"
+          disabled={isLoggingIn}
           onClick={() => {
-            void copyToClipboard(loginCmd, { providerName: displayName });
-            toastManager.add({
-              type: "success",
-              title: "Login command copied",
-              description: `Run in terminal to open browser login for ${displayName}.`,
-            });
+            void handleDirectLogin();
           }}
         >
-          <CopyIcon className="size-3" />
-          <span>Copy Login Command</span>
+          {isLoggingIn ? (
+            <LoaderIcon className="size-3 animate-spin" />
+          ) : (
+            <ExternalLinkIcon className="size-3" />
+          )}
+          <span>{isLoggingIn ? "Opening Browser..." : "Log In"}</span>
         </Button>
       ) : null}
     </div>

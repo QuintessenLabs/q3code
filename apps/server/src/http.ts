@@ -39,6 +39,7 @@ import {
 } from "./auth/http.ts";
 import * as ServerEnvironment from "./environment/ServerEnvironment.ts";
 import { browserApiCorsAllowedHeaders, browserApiCorsAllowedMethods } from "./httpCors.ts";
+import { expandHomePath } from "./pathExpansion.ts";
 
 const OTLP_TRACES_PROXY_PATH = "/api/observability/v1/traces";
 const LOOPBACK_HOSTNAMES = new Set(["127.0.0.1", "::1", "localhost"]);
@@ -223,6 +224,56 @@ export const assetRouteLayer = HttpRouter.add(
     }).pipe(
       Effect.orElseSucceed(() => HttpServerResponse.text("Internal Server Error", { status: 500 })),
     );
+  }),
+);
+
+export const providerLoginRouteLayer = HttpRouter.add(
+  "POST",
+  "/api/providers/login",
+  Effect.gen(function* () {
+    const request = yield* HttpServerRequest.HttpServerRequest;
+    const body = yield* request.json.pipe(
+      Effect.orElseSucceed(() => ({} as Record<string, unknown>)),
+    );
+    const driver = typeof body.driver === "string" ? body.driver : "codex";
+    const shadowHomePath =
+      typeof body.shadowHomePath === "string" ? body.shadowHomePath : undefined;
+
+    const env = { ...process.env };
+    if (shadowHomePath && shadowHomePath.trim().length > 0) {
+      env.CODEX_HOME = expandHomePath(shadowHomePath);
+    }
+
+    let command = "codex";
+    let args = ["login"];
+    if (driver === "claudeAgent") {
+      command = "claude";
+      args = ["auth", "login"];
+    } else if (driver === "cursor") {
+      command = "agent";
+      args = ["login"];
+    } else if (driver === "opencode") {
+      command = "opencode";
+      args = ["auth", "login"];
+    } else if (driver === "antigravity") {
+      command = "agy";
+      args = ["login"];
+    }
+
+    try {
+      const childProcess = await import("node:child_process");
+      const child = childProcess.spawn(command, args, {
+        env,
+        shell: true,
+        detached: true,
+        stdio: "ignore",
+      });
+      child.unref();
+    } catch {
+      // Ignored
+    }
+
+    return HttpServerResponse.json({ ok: true });
   }),
 );
 
