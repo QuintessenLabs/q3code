@@ -237,6 +237,16 @@ const ensureSymlink = Effect.fn("CodexHomeLayout.ensureSymlink")(function* (inpu
           try: async () => {
             const fs = await import("node:fs/promises");
             try {
+              const linkStat = await fs.lstat(link).catch(() => null);
+              if (linkStat) {
+                if (linkStat.isSymbolicLink()) {
+                  const targetExisting = await fs.readlink(link).catch(() => null);
+                  if (targetExisting === target) return;
+                }
+                await fs.rm(link, { recursive: true, force: true });
+              }
+            } catch {}
+            try {
               await fs.symlink(target, link, "junction");
             } catch (err: any) {
               if (err.code !== "EEXIST") throw err;
