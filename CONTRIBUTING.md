@@ -2,66 +2,36 @@
 
 ## Read This First
 
-We are not actively accepting contributions right now.
+Q3 is an experimental distribution of T3 Code, and we actively welcome contributions, suggestions, and feedback.
 
-You can still report a bug or open a PR, but please do so knowing there is a high chance we close it, defer it forever, or never look at it.
+Whether you are building a new provider adapter, improving agent workflows, fixing bugs, or testing experimental capabilities, we'd love your contributions.
 
-Feature requests and proposals belong in [Ideas discussions](https://github.com/pingdotgg/t3code/discussions/categories/ideas), not issues.
-
-If that sounds annoying, that is because it is. This project is still early and we are trying to keep scope, quality, and direction under control.
-
-PRs are automatically labeled with a `vouch:*` trust status and a `size:*` diff size based on changed lines.
-
-If you are an external contributor, expect `vouch:unvouched` until we explicitly add you to [.github/VOUCHED.td](.github/VOUCHED.td).
+Feature requests and proposals belong in [Ideas discussions](https://github.com/QuintessenLabs/q3code/discussions/categories/ideas), and bug reports belong in issues.
 
 ## What We Are Most Likely To Accept
 
-Small, focused bug fixes.
-
-Small reliability fixes.
-
-Small performance improvements.
-
-Tightly scoped maintenance work that clearly improves the project without changing its direction.
+- Experimental provider integrations and adapters.
+- Small, focused bug fixes and reliability improvements.
+- Performance and UI responsiveness enhancements.
+- Well-scoped features that make working with agents smoother.
+- Upstream compatibility and sync improvements.
 
 ## What We Are Least Likely To Accept
 
-Large PRs.
+- Massive unreviewed rewrites without prior discussion.
+- Breaking changes that disrupt compatibility with upstream T3 Code sync.
+- Unnecessary complexity or bloat that degrades app performance.
 
-Drive-by feature work.
+## If You Want To Open A PR
 
-Opinionated rewrites.
-
-Anything that expands product scope without us asking for it first.
-
-If you open a 1,000+ line PR full of new features, we will probably close it quickly and remember that you ignored the clearly written instructions.
-
-## If You Still Want To Open A PR
-
-Keep it small.
-
-Explain exactly what changed.
-
-Explain exactly why the change should exist.
-
-Do not mix unrelated fixes together.
-
-If the PR makes anything resembling a UI change, include clear before/after images.
-
-If the change depends on motion, timing, transitions, or interaction details, include a short video.
-
-If we have to guess what changed, we are much less likely to review it.
+- Keep it focused and clearly described.
+- Explain exactly what changed and why the change should exist.
+- Do not mix unrelated fixes or features together.
+- If the PR makes anything resembling a UI change, include clear before/after images.
+- If the change depends on motion, timing, transitions, or interaction details, include a short video.
 
 ## Discuss Changes First
 
-If you are thinking about a non-trivial change, start a discussion first. Issues are reserved for bug reports.
+If you are planning a non-trivial or architectural addition, start an Ideas discussion first. It helps us coordinate and make sure your work merges smoothly.
 
-That still does not mean we will want the PR, but it gives you a chance to avoid wasting your time.
-
-## Be Realistic
-
-Opening a PR does not create an obligation on our side.
-
-We may close it. We may ignore it. We may ask you to shrink it. We may reimplement the idea ourselves later.
-
-If you are fine with that, proceed.
+We are building in the open and excited to see what you create.

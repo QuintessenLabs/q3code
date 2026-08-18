@@ -74,9 +74,9 @@ The AUR packaging is maintained in this repository under [`packaging/aur`](./pac
 
 ## Some notes
 
-We are very very early in this project. Expect bugs.
+We are iterating quickly on experimental features. Expect bugs.
 
-We are (mostly) not accepting contributions yet. Small fixes may be considered. Big features will not be.
+We actively welcome contributions, comments, and suggestions. If you have an idea, want to improve an adapter, or want to test an experimental feature, feel free to open an Ideas discussion or pull request.
 
 ## Documentation
 
