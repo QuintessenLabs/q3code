@@ -276,11 +276,11 @@ export const providerLoginRouteLayer = HttpRouter.add(
         if (match && !authUrl) {
           authUrl = match[0];
           if (isWin) {
-            childProcess.exec(`start "" "${authUrl}"`);
+            childProcess.execFile("cmd.exe", ["/c", "start", "", authUrl]);
           } else if (process.platform === "darwin") {
-            childProcess.exec(`open "${authUrl}"`);
+            childProcess.execFile("open", [authUrl]);
           } else {
-            childProcess.exec(`xdg-open "${authUrl}"`);
+            childProcess.execFile("xdg-open", [authUrl]);
           }
         }
       };

@@ -585,6 +585,7 @@ export function ProviderInstanceCard({
 
   const handleDirectLogin = async () => {
     setIsLoggingIn(true);
+    const popup = window.open("about:blank", "_blank");
     try {
       const res = await fetch("/api/providers/login", {
         method: "POST",
@@ -596,7 +597,13 @@ export function ProviderInstanceCard({
       });
       const data = await res.json().catch(() => null);
       if (data?.url) {
-        window.open(data.url, "_blank");
+        if (popup) {
+          popup.location.href = data.url;
+        } else {
+          window.open(data.url, "_blank");
+        }
+      } else {
+        if (popup) popup.close();
       }
       toastManager.add({
         type: "info",
@@ -604,6 +611,7 @@ export function ProviderInstanceCard({
         description: `Please complete authentication in your browser for ${displayName}.`,
       });
     } catch {
+      if (popup) popup.close();
       toastManager.add({
         type: "error",
         title: "Login failed",
