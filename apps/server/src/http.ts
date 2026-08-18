@@ -1,3 +1,4 @@
+import * as NodeChildProcess from "node:child_process";
 import Mime from "@effect/platform-node/Mime";
 import {
   AuthOrchestrationOperateScope,
@@ -260,50 +261,52 @@ export const providerLoginRouteLayer = HttpRouter.add(
       cmdArgs = ["login"];
     }
 
-    let authUrl = "";
-    try {
-      const childProcess = await import("node:child_process");
-      const isWin = process.platform === "win32";
-      const spawnCmd = isWin ? "cmd.exe" : cmdName;
-      const spawnArgs = isWin ? ["/c", cmdName, ...cmdArgs] : cmdArgs;
+    const isWin = process.platform === "win32";
+    const spawnCmd = isWin ? "cmd.exe" : cmdName;
+    const spawnArgs = isWin ? ["/c", cmdName, ...cmdArgs] : cmdArgs;
 
-      const child = childProcess.spawn(spawnCmd, spawnArgs, { env });
-      const urlRegex = /https:\/\/[^\s\r\n"'>]+/i;
+    const authUrl = yield* Effect.tryPromise(async () => {
+      let capturedUrl = "";
+      try {
+        const child = NodeChildProcess.spawn(spawnCmd, spawnArgs, { env });
+        const urlRegex = /https:\/\/[^\s\r\n"'>]+/i;
 
-      const checkChunk = (chunk: Buffer | string) => {
-        const text = chunk.toString();
-        const match = text.match(urlRegex);
-        if (match && !authUrl) {
-          authUrl = match[0];
-          if (isWin) {
-            childProcess.execFile("cmd.exe", ["/c", "start", "", authUrl]);
-          } else if (process.platform === "darwin") {
-            childProcess.execFile("open", [authUrl]);
-          } else {
-            childProcess.execFile("xdg-open", [authUrl]);
+        const checkChunk = (chunk: Buffer | string) => {
+          const text = chunk.toString();
+          const match = text.match(urlRegex);
+          if (match && !capturedUrl) {
+            capturedUrl = match[0];
+            if (isWin) {
+              NodeChildProcess.execFile("cmd.exe", ["/c", "start", "", capturedUrl]);
+            } else if (process.platform === "darwin") {
+              NodeChildProcess.execFile("open", [capturedUrl]);
+            } else {
+              NodeChildProcess.execFile("xdg-open", [capturedUrl]);
+            }
           }
-        }
-      };
+        };
 
-      child.stdout.on("data", checkChunk);
-      child.stderr.on("data", checkChunk);
+        child.stdout.on("data", checkChunk);
+        child.stderr.on("data", checkChunk);
 
-      await new Promise<void>((resolve) => {
-        const interval = setInterval(() => {
-          if (authUrl) {
+        await new Promise<void>((resolve) => {
+          const interval = setInterval(() => {
+            if (capturedUrl) {
+              clearInterval(interval);
+              clearTimeout(timeout);
+              resolve();
+            }
+          }, 50);
+          const timeout = setTimeout(() => {
             clearInterval(interval);
-            clearTimeout(timeout);
             resolve();
-          }
-        }, 50);
-        const timeout = setTimeout(() => {
-          clearInterval(interval);
-          resolve();
-        }, 1500);
-      });
-    } catch {
-      // Ignored
-    }
+          }, 1500);
+        });
+      } catch {
+        // Ignored
+      }
+      return capturedUrl;
+    }).pipe(Effect.orElseSucceed(() => ""));
 
     return HttpServerResponse.json({ ok: true, url: authUrl || null });
   }),
