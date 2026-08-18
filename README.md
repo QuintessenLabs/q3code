@@ -10,18 +10,15 @@ Nothing. Q3 is an experimental fork of T3 Code. We love the work Theo and the pi
 
 ## What's in Q3?
 
-Q3 includes a few experimental additions on top of upstream T3 Code:
-
-- **Google Antigravity (`agy`):** Native adapter integration for Google Antigravity with full streaming turns, Gemini 3.7 Flash / 2.5 Pro models, and reasoning effort controls.
-- **Cursor Unlocked:** Enabled by default without early access gating.
-- **Multi-Account Subscriptions:** Run multiple subscriptions for the same provider (e.g. personal and work Codex accounts) concurrently without manual path hacking or logging out. All your skills, plugins, and configs stay unified.
-- **1-Click Setup in Providers UI:** Instead of manually running terminal install and login commands, manage your provider CLIs and auth directly from the Providers panel.
-- **Fully in Sync with Upstream:** An automated daily sync workflow tracks and merges upstream `pingdotgg/t3code` changes so all upstream fixes, performance improvements, and protocol features land here automatically.
+- **Google Antigravity (`agy`):** Native adapter for Antigravity with full streaming turns, model selection, and reasoning effort controls.
+- **Cursor Unlocked:** Enabled out of the box without early access gating.
+- **Multi-Account Support:** Run multiple subscriptions for the same provider (e.g. personal and work Codex) side-by-side with shared skills and plugins.
+- **Upstream Sync:** Automated daily sync merges all upstream T3 Code updates and fixes.
 
 ## Installation
 
 > [!WARNING]
-> Q3 currently supports Antigravity, Codex, Claude, Cursor, Grok Build and OpenCode. You can install and authenticate providers directly with one click inside the Q3 Providers panel, or run their respective CLI commands:
+> Q3 currently supports Antigravity, Codex, Claude, Cursor, Grok Build and OpenCode. Install and authenticate at least one provider before use:
 >
 > - Antigravity: install [Antigravity CLI](https://antigravity.google) (`agy`)
 > - Codex: install [Codex CLI](https://developers.openai.com/codex/cli) and run `codex login`
