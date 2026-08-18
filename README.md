@@ -1,16 +1,16 @@
-# Q3 Code (exper.)
+# Q3
 
-Q3 Code (exper.) is an "agent harness control surface" and an experimental distribution of [T3 Code](https://github.com/pingdotgg/t3code). This repository is kept fully in sync with upstream T3 Code `main` while shipping early-access capabilities and high-demand community PRs. It enables control of the agents on your machine with a best-in-class mobile app ([iOS](https://apps.apple.com/us/app/t3-code-remote-claude-more/id6787819824), [Android](https://play.google.com/store/apps/details?id=com.t3tools.t3code)), [web app](https://app.t3.codes) and [Electron-based desktop app](https://t3.codes).
+Q3 is an "agent harness control surface" and an experimental distribution of [T3 Code](https://github.com/pingdotgg/t3code). This repository is kept fully in sync with upstream T3 Code `main` while shipping early-access capabilities and high-demand community PRs. It enables control of the agents on your machine with a best-in-class mobile app ([iOS](https://apps.apple.com/us/app/t3-code-remote-claude-more/id6787819824), [Android](https://play.google.com/store/apps/details?id=com.t3tools.t3code)), [web app](https://app.t3.codes) and [Electron-based desktop app](https://t3.codes).
 
-Works with your subscriptions on Google Antigravity, Claude Code, Codex, Cursor, Grok Build, and OpenCode. If they're set up on your computer, Q3 Code can control them.
+Works with your subscriptions on Google Antigravity, Claude Code, Codex, Cursor, Grok Build, and OpenCode. If they're set up on your computer, Q3 can control them.
 
 ## "Wait, what are you selling me?"
 
-Nothing. Q3 Code is an experimental fork of T3 Code. We love the work Theo and the ping.gg team are doing, but we wanted a place to test and ship high-demand community PRs—like Google Antigravity integration, un-gated Cursor support, multi-account subscription switching, and 1-click CLI installation—while keeping the codebase fully in sync with upstream `main`.
+Nothing. Q3 is an experimental fork of T3 Code. We love the work Theo and the ping.gg team are doing, but we wanted a place to test and ship high-demand community PRs while keeping the codebase fully in sync with upstream `main`.
 
-## What's in Q3 Code (exper.)?
+## What's in Q3?
 
-Q3 Code includes a few experimental additions on top of upstream T3 Code:
+Q3 includes a few experimental additions on top of upstream T3 Code:
 
 - **Google Antigravity (`agy`):** Native adapter integration for Google Antigravity with full streaming turns, Gemini 3.7 Flash / 2.5 Pro models, and reasoning effort controls.
 - **Cursor Unlocked:** Enabled by default without early access gating.
