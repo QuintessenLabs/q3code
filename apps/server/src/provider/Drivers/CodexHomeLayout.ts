@@ -428,7 +428,7 @@ export const materializeCodexShadowHome = Effect.fn("materializeCodexShadowHome"
     if (
       !PRIVATE_ENTRY_NAMES.has(entryName) &&
       !SHADOW_LOCAL_ENTRY_NAMES.has(entryName) &&
-      !entryName.startsWith("..") &&
+      !entryName.startsWith(".") &&
       !entryName.endsWith(".tmp")
     ) {
       entries.add(entryName);
