@@ -227,20 +227,73 @@ const ensureSymlink = Effect.fn("CodexHomeLayout.ensureSymlink")(function* (inpu
     linkPath: link,
   });
 
-  const createLink = input.fileSystem.symlink(target, link).pipe(
-    Effect.catchTags({
-      PlatformError: (cause) =>
-        new CodexShadowHomeFileSystemError({
-          sharedHomePath: input.sharedHomePath,
-          effectiveHomePath: input.effectiveHomePath,
-          operation: "symlink",
-          path: link,
-          targetPath: target,
-          entryName: input.entryName,
-          cause,
-        }),
-    }),
-  );
+  const createLink = Effect.gen(function* () {
+    if (process.platform === "win32") {
+      const stat = yield* input.fileSystem.stat(target).pipe(
+        Effect.catchTags({ PlatformError: () => Effect.succeed(null) }),
+      );
+      if (stat && stat.type === "Directory") {
+        yield* Effect.tryPromise({
+          try: async () => {
+            const fs = await import("node:fs/promises");
+            try {
+              await fs.symlink(target, link, "junction");
+            } catch (err: any) {
+              if (err.code !== "EEXIST") throw err;
+            }
+          },
+          catch: (cause) =>
+            new CodexShadowHomeFileSystemError({
+              sharedHomePath: input.sharedHomePath,
+              effectiveHomePath: input.effectiveHomePath,
+              operation: "symlink",
+              path: link,
+              targetPath: target,
+              entryName: input.entryName,
+              cause,
+            }),
+        });
+        return;
+      }
+      if (stat && stat.type === "File") {
+        yield* Effect.tryPromise({
+          try: async () => {
+            const fs = await import("node:fs/promises");
+            try {
+              await fs.link(target, link);
+            } catch {
+              await fs.copyFile(target, link);
+            }
+          },
+          catch: (cause) =>
+            new CodexShadowHomeFileSystemError({
+              sharedHomePath: input.sharedHomePath,
+              effectiveHomePath: input.effectiveHomePath,
+              operation: "symlink",
+              path: link,
+              targetPath: target,
+              entryName: input.entryName,
+              cause,
+            }),
+        });
+        return;
+      }
+    }
+    yield* input.fileSystem.symlink(target, link).pipe(
+      Effect.catchTags({
+        PlatformError: (cause) =>
+          new CodexShadowHomeFileSystemError({
+            sharedHomePath: input.sharedHomePath,
+            effectiveHomePath: input.effectiveHomePath,
+            operation: "symlink",
+            path: link,
+            targetPath: target,
+            entryName: input.entryName,
+            cause,
+          }),
+      }),
+    );
+  });
 
   if (state._tag === "NotSymlink") {
     if (!REPLACEABLE_SHARED_RUNTIME_DIRECTORIES.has(input.entryName)) {
@@ -372,7 +425,12 @@ export const materializeCodexShadowHome = Effect.fn("materializeCodexShadowHome"
   );
   const entries = new Set<string>(KNOWN_SHARED_DIRECTORIES);
   for (const entryName of sharedEntryNames) {
-    if (!PRIVATE_ENTRY_NAMES.has(entryName) && !SHADOW_LOCAL_ENTRY_NAMES.has(entryName)) {
+    if (
+      !PRIVATE_ENTRY_NAMES.has(entryName) &&
+      !SHADOW_LOCAL_ENTRY_NAMES.has(entryName) &&
+      !entryName.startsWith("..") &&
+      !entryName.endsWith(".tmp")
+    ) {
       entries.add(entryName);
     }
   }

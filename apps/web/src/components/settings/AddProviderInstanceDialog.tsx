@@ -191,7 +191,11 @@ export function AddProviderInstanceDialog({
     setHasAttemptedSubmit(true);
     if (instanceIdError !== null) return;
 
-    const config = configByDriver[driver] ?? {};
+    const rawConfig = configByDriver[driver] ?? {};
+    const config =
+      driver === "codex" && !rawConfig.shadowHomePath
+        ? { ...rawConfig, shadowHomePath: `~/.codex-t3/${slugifyLabel(label) || "account"}` }
+        : rawConfig;
     const hasConfig = Object.keys(config).length > 0;
     const normalizedAccentColor = normalizeProviderAccentColor(accentColor);
 
