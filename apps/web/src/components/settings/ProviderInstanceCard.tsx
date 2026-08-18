@@ -577,18 +577,26 @@ export function ProviderInstanceCard({
     </>
   );
 
-  const INSTALL_COMMANDS_BY_DRIVER: Record<string, string> = {
-    codex: "npm install -g @openai/codex@latest",
-    claudeAgent: "npm install -g @anthropic-ai/claude-code@latest",
-    opencode: "npm install -g opencode-ai@latest",
-    antigravity: "npm install -g @google/antigravity@latest",
-  };
-
-  const isNotInstalled = liveProvider?.installed === false;
-  const installCmd = INSTALL_COMMANDS_BY_DRIVER[String(instance.driver)] ?? updateCommand ?? null;
+  const shadowPath = typeof (instance.config as Record<string, unknown> | undefined)?.shadowHomePath === "string"
+    ? (instance.config as Record<string, unknown>).shadowHomePath as string
+    : "";
+  const isCodexShadow = instance.driver === "codex" && shadowPath.trim().length > 0;
+  const loginCmd = isCodexShadow
+    ? `$env:CODEX_HOME="${shadowPath}"; codex login`
+    : instance.driver === "codex"
+    ? "codex login"
+    : instance.driver === "claudeAgent"
+    ? "claude auth login"
+    : instance.driver === "cursor"
+    ? "agent login"
+    : instance.driver === "opencode"
+    ? "opencode auth login"
+    : instance.driver === "antigravity"
+    ? "agy login"
+    : "login";
 
   const authRowNode = (
-    <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[13px] leading-[1.45] text-muted-foreground/80">
+    <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px] leading-[1.45] text-muted-foreground/80">
       <p className="flex min-w-0 flex-wrap items-center gap-x-1">
         {hasAuthenticatedEmail ? (
           <>
@@ -604,18 +612,23 @@ export function ProviderInstanceCard({
         )}
         {summary.detail ? <span>- {summary.detail}</span> : null}
       </p>
-      {isNotInstalled && installCmd ? (
+      {!hasAuthenticatedEmail ? (
         <Button
           type="button"
           size="xs"
-          variant="outline"
-          className="h-5 gap-1 px-1.5 text-[11px] font-medium text-foreground hover:bg-muted"
+          variant="secondary"
+          className="h-6 gap-1 px-2 text-xs font-medium text-foreground hover:bg-muted"
           onClick={() => {
-            void copyToClipboard(installCmd, { providerName: displayName });
+            void copyToClipboard(loginCmd, { providerName: displayName });
+            toastManager.add({
+              type: "success",
+              title: "Login command copied",
+              description: `Run in terminal to open browser login for ${displayName}.`,
+            });
           }}
         >
           <CopyIcon className="size-3" />
-          <span>Copy install command</span>
+          <span>Copy Login Command</span>
         </Button>
       ) : null}
     </div>
