@@ -577,22 +577,48 @@ export function ProviderInstanceCard({
     </>
   );
 
+  const INSTALL_COMMANDS_BY_DRIVER: Record<string, string> = {
+    codex: "npm install -g @openai/codex@latest",
+    claudeAgent: "npm install -g @anthropic-ai/claude-code@latest",
+    opencode: "npm install -g opencode-ai@latest",
+    antigravity: "npm install -g @google/antigravity@latest",
+  };
+
+  const isNotInstalled = liveProvider?.installed === false;
+  const installCmd = INSTALL_COMMANDS_BY_DRIVER[String(instance.driver)] ?? updateCommand ?? null;
+
   const authRowNode = (
-    <p className="flex min-w-0 flex-wrap items-center gap-x-1 text-[13px] leading-[1.45] text-muted-foreground/80">
-      {hasAuthenticatedEmail ? (
-        <>
-          <span>Authenticated as</span>
-          <ProviderAuthEmail email={authEmail} />
-          {authenticatedDetail ? <span>· {authenticatedDetail}</span> : null}
-        </>
-      ) : (
-        <>
-          <span>{summary.headline}</span>
-          <ProviderAuthEmail email={authEmail} separator prefix="Email" />
-        </>
-      )}
-      {summary.detail ? <span>- {summary.detail}</span> : null}
-    </p>
+    <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-[13px] leading-[1.45] text-muted-foreground/80">
+      <p className="flex min-w-0 flex-wrap items-center gap-x-1">
+        {hasAuthenticatedEmail ? (
+          <>
+            <span>Authenticated as</span>
+            <ProviderAuthEmail email={authEmail} />
+            {authenticatedDetail ? <span>· {authenticatedDetail}</span> : null}
+          </>
+        ) : (
+          <>
+            <span>{summary.headline}</span>
+            <ProviderAuthEmail email={authEmail} separator prefix="Email" />
+          </>
+        )}
+        {summary.detail ? <span>- {summary.detail}</span> : null}
+      </p>
+      {isNotInstalled && installCmd ? (
+        <Button
+          type="button"
+          size="xs"
+          variant="outline"
+          className="h-5 gap-1 px-1.5 text-[11px] font-medium text-foreground hover:bg-muted"
+          onClick={() => {
+            void copyToClipboard(installCmd, { providerName: displayName });
+          }}
+        >
+          <CopyIcon className="size-3" />
+          <span>Copy install command</span>
+        </Button>
+      ) : null}
+    </div>
   );
 
   const versionCodeNode = versionLabel ? (
