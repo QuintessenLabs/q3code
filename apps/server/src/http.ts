@@ -244,36 +244,68 @@ export const providerLoginRouteLayer = HttpRouter.add(
       env.CODEX_HOME = expandHomePath(shadowHomePath);
     }
 
-    let command = "codex";
-    let args = ["login"];
+    let cmdName = "codex";
+    let cmdArgs = ["login"];
     if (driver === "claudeAgent") {
-      command = "claude";
-      args = ["auth", "login"];
+      cmdName = "claude";
+      cmdArgs = ["auth", "login"];
     } else if (driver === "cursor") {
-      command = "agent";
-      args = ["login"];
+      cmdName = "agent";
+      cmdArgs = ["login"];
     } else if (driver === "opencode") {
-      command = "opencode";
-      args = ["auth", "login"];
+      cmdName = "opencode";
+      cmdArgs = ["auth", "login"];
     } else if (driver === "antigravity") {
-      command = "agy";
-      args = ["login"];
+      cmdName = "agy";
+      cmdArgs = ["login"];
     }
 
+    let authUrl = "";
     try {
       const childProcess = await import("node:child_process");
-      const child = childProcess.spawn(command, args, {
-        env,
-        shell: true,
-        detached: true,
-        stdio: "ignore",
+      const isWin = process.platform === "win32";
+      const spawnCmd = isWin ? "cmd.exe" : cmdName;
+      const spawnArgs = isWin ? ["/c", cmdName, ...cmdArgs] : cmdArgs;
+
+      const child = childProcess.spawn(spawnCmd, spawnArgs, { env });
+      const urlRegex = /https:\/\/[^\s\r\n"'>]+/i;
+
+      const checkChunk = (chunk: Buffer | string) => {
+        const text = chunk.toString();
+        const match = text.match(urlRegex);
+        if (match && !authUrl) {
+          authUrl = match[0];
+          if (isWin) {
+            childProcess.exec(`start "" "${authUrl}"`);
+          } else if (process.platform === "darwin") {
+            childProcess.exec(`open "${authUrl}"`);
+          } else {
+            childProcess.exec(`xdg-open "${authUrl}"`);
+          }
+        }
+      };
+
+      child.stdout.on("data", checkChunk);
+      child.stderr.on("data", checkChunk);
+
+      await new Promise<void>((resolve) => {
+        const interval = setInterval(() => {
+          if (authUrl) {
+            clearInterval(interval);
+            clearTimeout(timeout);
+            resolve();
+          }
+        }, 50);
+        const timeout = setTimeout(() => {
+          clearInterval(interval);
+          resolve();
+        }, 1500);
       });
-      child.unref();
     } catch {
       // Ignored
     }
 
-    return HttpServerResponse.json({ ok: true });
+    return HttpServerResponse.json({ ok: true, url: authUrl || null });
   }),
 );
 

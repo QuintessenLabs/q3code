@@ -586,7 +586,7 @@ export function ProviderInstanceCard({
   const handleDirectLogin = async () => {
     setIsLoggingIn(true);
     try {
-      await fetch("/api/providers/login", {
+      const res = await fetch("/api/providers/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -594,6 +594,10 @@ export function ProviderInstanceCard({
           shadowHomePath: shadowPath,
         }),
       });
+      const data = await res.json().catch(() => null);
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
       toastManager.add({
         type: "info",
         title: "Browser login opened",
