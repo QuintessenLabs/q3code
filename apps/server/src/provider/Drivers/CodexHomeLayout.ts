@@ -296,6 +296,10 @@ const ensureSymlink = Effect.fn("CodexHomeLayout.ensureSymlink")(function* (inpu
   });
 
   if (state._tag === "NotSymlink") {
+    if (process.platform === "win32") {
+      yield* input.fileSystem.remove(link, { recursive: true }).pipe(Effect.ignore);
+      return yield* createLink;
+    }
     if (!REPLACEABLE_SHARED_RUNTIME_DIRECTORIES.has(input.entryName)) {
       return yield* new CodexShadowHomeEntryConflictError({
         sharedHomePath: input.sharedHomePath,
