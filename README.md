@@ -1,28 +1,27 @@
 # Q3 (Epsilon)
 
-> **Q3 (Epsilon)** is the bleeding-edge, experimental distribution and fork of [T3 Code](https://github.com/pingdotgg/t3code). It integrates high-demand community PRs and advanced capabilities (including Google Antigravity, un-gated Cursor, and multi-account switching) while staying continuously synchronized with upstream `main`.
+Q3 is an "agent harness control surface" and an experimental distribution of [T3 Code](https://github.com/pingdotgg/t3code). It enables control of the agents on your machine with a best-in-class mobile app ([iOS](https://apps.apple.com/us/app/t3-code-remote-claude-more/id6787819824), [Android](https://play.google.com/store/apps/details?id=com.t3tools.t3code)), [web app](https://app.t3.codes) and [Electron-based desktop app](https://t3.codes).
 
-Q3 is an "agent harness control surface". It enables control of the agents on your machine with a best-in-class mobile app ([iOS](https://apps.apple.com/us/app/t3-code-remote-claude-more/id6787819824), [Android](https://play.google.com/store/apps/details?id=com.t3tools.t3code)), [web app](https://app.t3.codes) and [Electron-based desktop app](https://t3.codes).
-
-Works with your subscriptions on **Google Antigravity**, **Claude Code**, **Codex**, **Cursor**, **Grok Build**, and **OpenCode**. If they're set up on your computer, Q3 can control them.
-
-## ⚡ What's in Q3 (Epsilon)?
-
-- 🌌 **Google Antigravity (`agy`) Integration:** Direct integration for the Antigravity CLI adapter, offering streaming turns, Gemini 3.7 Flash, Gemini 2.5 Pro, thinking token inspection, and reasoning effort controls (`low`, `medium`, `high`).
-- 🔓 **Cursor Provider Unlocked:** Enabled by default without early access restrictions.
-- 👥 **Multi-Subscription Vault:** Seamless concurrent account management with full skill and plugin sharing.
-- 🔄 **Continuous Upstream Sync:** Automatically tracks and merges upstream `pingdotgg/t3code` main releases daily via GitHub Actions.
+Works with your subscriptions on Google Antigravity, Claude Code, Codex, Cursor, Grok Build, and OpenCode. If they're set up on your computer, Q3 can control them.
 
 ## "Wait, what are you selling me?"
 
-Nothing. We built T3 Code because we wanted the best possible development experience with agents. We were inspired by existing solutions like the Codex desktop app, Conductor, Claude Desktop and Cursor Glass, but none met our bar.
+Nothing. Q3 is an experimental fork of T3 Code. We love the work Theo and the ping.gg team are doing, but we wanted a place to test and ship high-demand community PRs—like Google Antigravity integration, un-gated Cursor support, multi-account subscription switching, and 1-click CLI installation—while keeping the codebase continuously in sync with upstream `main`.
 
-We wanted something performant, remote-ready, and truly open. If we ever go the wrong direction, we want you to have everything you need to fork and build the editor that you want.
+## What's in Q3?
+
+Q3 includes a few experimental additions on top of upstream T3 Code:
+
+- **Google Antigravity (`agy`):** Native adapter integration for Google Antigravity with full streaming turns, Gemini 3.7 Flash / 2.5 Pro models, and reasoning effort controls.
+- **Cursor Unlocked:** Enabled by default without early access gating.
+- **Multi-Account Subscriptions:** Run multiple subscriptions for the same provider (e.g. personal and work Codex accounts) concurrently without manual path hacking or logging out. All your skills, plugins, and configs stay unified.
+- **1-Click Setup in Providers UI:** Instead of manually running terminal install and login commands, manage your provider CLIs and auth directly from the Providers panel.
+- **Continuous Upstream Sync:** A daily automated sync workflow tracks and merges upstream `pingdotgg/t3code` changes so fixes and performance improvements land here automatically.
 
 ## Installation
 
 > [!WARNING]
-> Q3 currently supports Antigravity, Codex, Claude, Cursor, Grok Build and OpenCode. Install and authenticate at least one provider before use:
+> Q3 currently supports Antigravity, Codex, Claude, Cursor, Grok Build and OpenCode. You can install and authenticate providers directly with one click inside the Q3 Providers panel, or run their respective CLI commands:
 >
 > - Antigravity: install [Antigravity CLI](https://antigravity.google) (`agy`)
 > - Codex: install [Codex CLI](https://developers.openai.com/codex/cli) and run `codex login`
